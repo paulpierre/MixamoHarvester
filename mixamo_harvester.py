@@ -159,11 +159,16 @@ def download_animation(url, output_dir, filename, character_id):
     logging.info(f"✅ Downloaded: {filepath}")
 
 def process_animation(bearer_token, character_id, animation, output_dir, state):
-    if ',' in animation['name']:  # Skip packs
-        logging.info(f"❗ Skipping pack: {animation['name']}")
+    if animation["type"]=="MotionPack":
+        logging.info(f"⏭️ Skipping Motion Pack: {animation['name']}")
         return
-
-    filename = f"{animation['name']}_{character_id}.fbx"
+    
+    filename = f"{animation['name']}_{animation['motion_id']}_{character_id}.fbx"
+    # replace invalid characters
+    for c in ['/', '\\', '?', '%', '*', ':', '|', '"', '<', '>']:
+        filename = filename.replace(c, '-')
+    
+    
     filepath = os.path.join(output_dir, filename)
 
     if os.path.exists(filepath):
